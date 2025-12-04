@@ -55,7 +55,25 @@ from .errors import HTTPException, RateLimited, Forbidden, NotFound, LoginFailur
 from .gateway import DiscordClientWebSocketResponse
 from .file import File
 from .mentions import AllowedMentions
-from . import __version__, utils
+from . import utils
+# Import __version__ safely to avoid circular imports during package initialization
+try:
+    import sys
+    if 'discord' in sys.modules and hasattr(sys.modules['discord'], '__version__'):
+        __version__ = sys.modules['discord'].__version__
+    else:
+        # During initial import, read directly from file to avoid circular import
+        import os
+        import re
+        init_file = os.path.join(os.path.dirname(os.path.dirname(__file__)), '__init__.py')
+        if os.path.exists(init_file):
+            with open(init_file, 'r', encoding='utf-8') as f:
+                match = re.search(r"^__version__\s*=\s*['\"]([^'\"]*)['\"]", f.read(), re.MULTILINE)
+                __version__ = match.group(1) if match else '2.6.0a'
+        else:
+            __version__ = '2.6.0a'
+except Exception:
+    __version__ = '2.6.0a'  # fallback version
 from .utils import MISSING
 from .flags import MessageFlags
 

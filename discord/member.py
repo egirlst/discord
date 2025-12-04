@@ -964,7 +964,11 @@ class Member(discord.abc.Messageable, _UserTag):
             payload['flags'] = flags.value
 
         if payload:
-            data = await http.edit_member(guild_id, self.id, reason=reason, **payload)
+            if me:
+                # When editing yourself, use @me endpoint
+                data = await http.edit_my_member(guild_id, reason=reason, **payload)
+            else:
+                data = await http.edit_member(guild_id, self.id, reason=reason, **payload)
             return Member(data=data, guild=self.guild, state=self._state)
 
     async def request_to_speak(self) -> None:
