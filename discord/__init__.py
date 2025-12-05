@@ -58,7 +58,7 @@ from .mentions import *
 from .shard import *
 from .player import *
 from .webhook import *
-from .voice_client import *
+from .voice_client import VoiceProtocol, VoiceClient  # pyright: ignore[reportUnusedImport]
 from .audit_logs import *
 from .raw_models import *
 from .team import *
